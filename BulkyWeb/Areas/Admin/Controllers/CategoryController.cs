@@ -2,7 +2,7 @@
 using Bulky.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulkyWeb.Controllers
+namespace BulkyWeb.Areas.Admin.Controllers
 {
     public class CategoryController : Controller
     {
@@ -13,7 +13,8 @@ namespace BulkyWeb.Controllers
         }
 
         public IActionResult Index()
-        {List<Category> categories= _unitOfWork.categoryRepository.GetAll().ToList();
+        {
+            List<Category> categories = _unitOfWork.categoryRepository.GetAll().ToList();
             return View(categories);
         }
         public IActionResult Create()
@@ -22,7 +23,8 @@ namespace BulkyWeb.Controllers
         }
         [HttpPost]
         public IActionResult Create(Category obj)
-        {if(obj.Name==obj.DisplayOrder.ToString())
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
             {
                 ModelState.AddModelError("name", "this DisplayOrder Cannot exactly match the Name .");
 
@@ -37,22 +39,24 @@ namespace BulkyWeb.Controllers
             return View();
         }
         public IActionResult Edit(int? id)
-        {if (id == null|| id==0) { return NotFound(); }
-        Category? category= _unitOfWork.categoryRepository.Get(u=>u.Id==id);
-            if (category==null) return NotFound();
+        {
+            if (id == null || id == 0) { return NotFound(); }
+            Category? category = _unitOfWork.categoryRepository.Get(u => u.Id == id);
+            if (category == null) return NotFound();
             return View(category);
         }
         [HttpPost]
 
         public IActionResult Edit(Category obj)
-        {if(ModelState.IsValid)
+        {
+            if (ModelState.IsValid)
             {
                 _unitOfWork.categoryRepository.Update(obj);
                 _unitOfWork.Save();
                 TempData["success"] = "Category Updated Successfully";
                 return RedirectToAction("Index");
             }
-           
+
             return View();
         }
         public IActionResult Delete(int? id)
@@ -73,7 +77,7 @@ namespace BulkyWeb.Controllers
             return RedirectToAction("Index");
 
 
-           
+
 
         }
     }
