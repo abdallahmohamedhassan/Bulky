@@ -145,7 +145,7 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                     Text = i,
                     Value = i
                 }),
-                CompanyList = _unitOfWork.categoryRepository.GetAll().Select(i => new SelectListItem
+                CompanyList = _unitOfWork.companyRepository.GetAll().Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
@@ -175,7 +175,7 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                 user.PhoneNumber = Input.PhoneNumber;
                 if (Input.Role == SD.Role_Company)
                 {
-                   // user.CompanyId = Input.CompanyId;
+                   user.CompanyId = Input.CompanyId;
                 }
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
