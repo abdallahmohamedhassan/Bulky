@@ -1,3 +1,4 @@
+using Bulky.DataAccess.Migrations;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -44,7 +45,20 @@ namespace BulkyWeb.Areas.Customer.Controllers
            var claimsIdentity=(ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCart.ApplicationUserId = userId;
-            _unitOfWork.shoppingCartRepository.Add(shoppingCart);
+            ShoppingCart cartFromDb = _unitOfWork.shoppingCartRepository.Get(u => u.ApplicationUserId == userId
+            && u.ProductId == shoppingCart.ProductId);
+            if (cartFromDb != null)
+            {
+                cartFromDb.Count += shoppingCart.Count;
+                _unitOfWork.shoppingCartRepository.Update(cartFromDb);
+
+            }
+            else
+            {
+                _unitOfWork.shoppingCartRepository.Add(shoppingCart);
+
+            }
+            TempData["success"] = "Cart updated successfully";
             _unitOfWork.Save();
 
 
