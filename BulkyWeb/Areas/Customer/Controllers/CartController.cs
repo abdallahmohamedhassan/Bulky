@@ -1,6 +1,7 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.ViewModels;
+using Bulky.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -51,5 +52,45 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 }
             }
         }
+
+
+        public IActionResult Plus(int cartId)
+        {
+            var cartFromDb = _unitOfWork.shoppingCartRepository.Get(u => u.Id == cartId);
+            cartFromDb.Count += 1;
+            _unitOfWork.shoppingCartRepository.Update(cartFromDb);
+            _unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Minus(int cartId)
+        {
+            var cartFromDb = _unitOfWork.shoppingCartRepository.Get(u => u.Id == cartId);
+            if (cartFromDb.Count <= 1)
+            {
+                //remove that from cart
+
+                _unitOfWork.shoppingCartRepository.Remove(cartFromDb);
+               }
+            else
+            {
+                cartFromDb.Count -= 1;
+                _unitOfWork.shoppingCartRepository.Update(cartFromDb);
+            }
+
+            _unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
+        }
+        public IActionResult Remove(int cartId)
+        {
+            var cartFromDb = _unitOfWork.shoppingCartRepository.Get(u => u.Id == cartId);
+
+            _unitOfWork.shoppingCartRepository.Remove(cartFromDb);
+
+               _unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
+        }
+
+
+    }
 }
